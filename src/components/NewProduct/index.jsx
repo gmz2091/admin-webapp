@@ -1,14 +1,28 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
+import {
+  getStorage, ref, uploadBytes, getDownloadURL,
+} from 'firebase/storage';
 import WarningAlert from '../WarningAlert';
+import FirebaseApp from '../../config/configFirebase';
 import './main.css';
 
 const ModalProduct = ({ setModalProduct }) => {
   const [checked, setChecked] = useState(false);
   const [warning, setWarning] = useState(false);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(undefined);
   const [errorFile, setErrorFile] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
+
+  // Firebase Utils
+  const firestore = getFirestore(FirebaseApp());
+  const storage = getStorage(FirebaseApp());
+
+  useEffect(() => {
+    // console.log(firestore, storage);
+  }, []);
 
   // eslint-disable-next-line no-unused-vars
   const [product, setProduct] = useState(
@@ -16,10 +30,14 @@ const ModalProduct = ({ setModalProduct }) => {
       name: '',
       description: '',
       price: '',
-      image: '',
       quantity: '',
     },
   );
+
+  const setID = () => {
+    const id = Date.now();
+    return id;
+  };
 
   const getDate = () => {
     const date = new Date();
@@ -37,31 +55,60 @@ const ModalProduct = ({ setModalProduct }) => {
     });
   };
 
-  const fielHandler = (e) => {
+  const fielHandler = async (e) => {
+    let urlDescarga;
     const files = e.target.files[0];
     if (files.type === 'image/jpeg' || files.type === 'image/png') {
-      setFile(files);
+      setShowSpinner(true);
+      console.log('Subiendo Imagen');
+      try {
+        const archivoRef = ref(storage, `${product.name}/${files.name}`);
+        const fileUp = await uploadBytes(archivoRef, files);
+        // obtener url de descarga
+        urlDescarga = await getDownloadURL(archivoRef);
+        console.log(fileUp);
+        setFile(urlDescarga);
+      } catch (error) {
+        console.log(error.message);
+      }
+      console.log('Imagen Subida');
+      setShowSpinner(false);
     } else {
       setErrorFile(true);
       setTimeout(() => {
         setErrorFile(false);
       }, 2000);
     }
-    setFile(files);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setProduct({
       ...product,
+      id: setID(),
       category: checked,
       createdAt: getDate(),
+      image: file,
     });
     setWarning(true);
   };
 
-  const handleSubmitProduct = () => {
-    console.log(file);
+  const handleSubmitProduct = async () => {
+    // const name = product.name.replaceAll(' ', '-').toLowerCase();
+    try {
+      console.log('Guardando...');
+      const docuRef = doc(firestore, `inventario/${setID()}`);
+      await setDoc(docuRef, { ...product });
+    } catch (error) {
+      console.log(error.message);
+    }
+    console.log('Base de datos actualizada');
+    product.name = '';
+    product.description = '';
+    product.price = '';
+    product.quantity = '';
+    setChecked(false);
+    setFile(undefined);
   };
 
   return (
@@ -94,6 +141,7 @@ const ModalProduct = ({ setModalProduct }) => {
           >
             <input
               type="text"
+              value={product.name}
               placeholder="Product Name"
               className="w-full px-3 py-2 my-2 bg-gray-100 focus:outline-none"
               name="name"
@@ -103,6 +151,7 @@ const ModalProduct = ({ setModalProduct }) => {
             />
             <input
               type="text"
+              value={product.description}
               placeholder="Product Description"
               className="w-full px-3 py-2 my-2 bg-gray-100 focus:outline-none"
               name="description"
@@ -112,6 +161,7 @@ const ModalProduct = ({ setModalProduct }) => {
             />
             <input
               type="text"
+              value={product.price}
               placeholder="Product Price"
               className="w-full px-3 py-2 my-2 bg-gray-100 focus:outline-none"
               name="price"
@@ -121,6 +171,7 @@ const ModalProduct = ({ setModalProduct }) => {
             />
             <input
               type="text"
+              value={product.quantity}
               placeholder="Product Stock"
               className="w-full px-3 py-2 my-2 bg-gray-100 focus:outline-none"
               name="quantity"
@@ -157,7 +208,7 @@ const ModalProduct = ({ setModalProduct }) => {
                   fielHandler(e);
                 }}
               />
-              <label type="button" htmlFor="image" className="w-full px-3 py-2 my-2 bg-green-200 cursor-pointer rounded">Imagen</label>
+              <label type="button" htmlFor="image" className="w-full px-3 py-2 my-2 bg-green-200 cursor-pointer rounded">{showSpinner ? 'Subiendo Imagen, Espere...' : 'Imagen'}</label>
 
             </div>
             <button type="submit" className="w-full bg-blue-400 px-4 py-2 rounded">Save</button>

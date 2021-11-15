@@ -10,7 +10,6 @@ import Login from './components/Login';
 import Home from './Views/Home';
 import FirebaseApp from './config/configFirebase';
 import Inventario from './components/Inventarios';
-import RequireAuth from './functions/Redirect';
 
 const App = () => {
   const [userGlobal, setUserGlobal] = useState(null);
@@ -30,9 +29,9 @@ const App = () => {
       {!userGlobal ? (
         <Router>
           <Switch>
-            <RequireAuth user={userGlobal} exact path="/">
+            <Route user={userGlobal} exact path="/">
               <Home />
-            </RequireAuth>
+            </Route>
             <Route exact path="/login">
               <Login />
             </Route>
