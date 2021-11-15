@@ -1,32 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  getFirestore, collection, query, getDocs,
-} from 'firebase/firestore';
-import FirebaseApp from '../../config/configFirebase';
+// import {
+//   getFirestore, collection, query, getDocs,
+// } from 'firebase/firestore';
+// import FirebaseApp from '../../config/configFirebase';
 import ModalProduct from '../NewProduct';
+import { getInventarioData, deletdProduct } from '../../functions/functionsFirebase';
 
 const Inventario = () => {
-  const firestore = getFirestore(FirebaseApp());
+  const [editProduc, setEditProduc] = useState(false);
+  // const firestore = getFirestore(FirebaseApp());
   const [modalProduct, setModalProduct] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [inventario, setInventario] = useState([]);
-  useEffect(async () => {
-    try {
-      const q = query(collection(firestore, 'inventario'));
-      const querySnapshot = await getDocs(q);
-      // setInventario(querySnapshot.docs);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        setInventario((prevState) => [...prevState, doc.data()]);
-      });
-    } catch (error) {
-      console.log('error', error.message);
-    }
+
+  const getData = async () => {
+    const result = await getInventarioData();
+    setInventario(result.docs);
+  };
+
+  useEffect(() => {
+    getData();
   }, []);
+
   return (
     <>
-      {modalProduct ? (<ModalProduct setModalProduct={setModalProduct} />) : null}
+      {modalProduct ? (
+        <ModalProduct
+          setModalProduct={setModalProduct}
+          getData={getData}
+          editProduc={editProduc}
+        />
+      ) : null}
       <div className="w-10/12 m-auto mt-20">
         <div className="w-1/2 m-auto my-14">
           <h1 className="text-center">Inventarios L</h1>
@@ -83,40 +88,63 @@ const Inventario = () => {
                           <th scope="col" className="relative px-6 py-3">
                             <span className="sr-only">Edit</span>
                           </th>
+                          <th scope="col" className="relative px-6 py-3">
+                            {/* <span className="sr-only">Edit</span> */}
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {inventario.map((product) => (
-                          <tr key={product.id}>
+                          <tr key={product.data().id}>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
                                 <div
                                   className="flex-shrink-0 h-10 w-10"
                                 >
-                                  <img className="h-10 w-10" src={product.image} alt="" />
+                                  <img className="h-12 w-14" src={product.data().image} alt="" />
                                 </div>
                                 <div className="ml-4">
-                                  <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                                  <div className="text-sm text-gray-500">{product.description}</div>
+                                  <div className="text-sm font-medium text-gray-900">{product.data().name}</div>
+                                  <div className="text-sm text-gray-500">{product.data().description}</div>
                                 </div>
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{product.price}</div>
-                              <div className="text-sm text-gray-500">{product.category}</div>
+                              <div className="text-sm text-gray-900">{product.data().price}</div>
+                              <div className="text-sm text-gray-500">{product.data().category}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                 Active
                               </span>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.description}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.data().description}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <p
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditProduc(true);
+                                  setModalProduct(!modalProduct);
+                                }}
                                 className="text-indigo-600 hover:text-indigo-900"
                               >
-                                Edit
-                              </p>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  deletdProduct(product.id);
+                                  getData();
+                                }}
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                              </button>
                             </td>
                           </tr>
                         ))}

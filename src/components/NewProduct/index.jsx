@@ -1,7 +1,9 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { getFirestore, setDoc, doc } from 'firebase/firestore';
+import {
+  getFirestore, addDoc, collection,
+} from 'firebase/firestore';
 import {
   getStorage, ref, uploadBytes, getDownloadURL,
 } from 'firebase/storage';
@@ -9,7 +11,7 @@ import WarningAlert from '../WarningAlert';
 import FirebaseApp from '../../config/configFirebase';
 import './main.css';
 
-const ModalProduct = ({ setModalProduct }) => {
+const ModalProduct = ({ setModalProduct, getData }) => {
   const [checked, setChecked] = useState(false);
   const [warning, setWarning] = useState(false);
   const [file, setFile] = useState(undefined);
@@ -97,8 +99,7 @@ const ModalProduct = ({ setModalProduct }) => {
     // const name = product.name.replaceAll(' ', '-').toLowerCase();
     try {
       console.log('Guardando...');
-      const docuRef = doc(firestore, `inventario/${setID()}`);
-      await setDoc(docuRef, { ...product });
+      await addDoc(collection(firestore, 'inventario'), product);
     } catch (error) {
       console.log(error.message);
     }
@@ -109,6 +110,7 @@ const ModalProduct = ({ setModalProduct }) => {
     product.quantity = '';
     setChecked(false);
     setFile(undefined);
+    await getData();
   };
 
   return (
@@ -119,7 +121,7 @@ const ModalProduct = ({ setModalProduct }) => {
           setWarning={setWarning}
         />
       ) : null}
-      <div className="fixed bg-gray-800 bg-opacity-95 flex flex-wrap items-center justify-center min-h-screen min-w-full top-0">
+      <div className="fixed bg-gray-800 bg-opacity-95 flex flex-wrap items-center justify-center min-h-screen min-w-full top-0 animate__animated animate__faster animate__fadeIn">
         <button
           className="absolute top-20 right-12"
           type="button"
@@ -221,6 +223,7 @@ const ModalProduct = ({ setModalProduct }) => {
 
 ModalProduct.propTypes = {
   setModalProduct: PropTypes.func.isRequired,
+  getData: PropTypes.func.isRequired,
 };
 
 export default ModalProduct;
