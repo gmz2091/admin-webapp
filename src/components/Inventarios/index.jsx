@@ -29,7 +29,7 @@ const Inventario = () => {
       {modalProduct ? (<ModalProduct setModalProduct={setModalProduct} />) : null}
       <div className="w-10/12 m-auto mt-20">
         <div className="w-1/2 m-auto my-14">
-          <h1 className="text-center">Inventarios</h1>
+          <h1 className="text-center">Inventarios L</h1>
         </div>
         <Link to="/" className="bg-blue-400 px-4 py-2 rounded">Home</Link>
         <div className="w-full py-12">
