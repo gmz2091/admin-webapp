@@ -1,0 +1,22 @@
+.animation {
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+  }
+  .animation--infinite {
+    animation-iteration-count: infinite;
+  }
+  .animation--up-down {
+    animation-name: upDown;
+  }
+  
+  @keyframes upDown {
+    0% {
+      transform: translateY(-15px);
+    }
+    50% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-15px);
+    }
+  }
