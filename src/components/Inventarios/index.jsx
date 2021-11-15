@@ -21,7 +21,7 @@ const Inventario = () => {
         setInventario((prevState) => [...prevState, doc.data()]);
       });
     } catch (error) {
-      console.log(error.message);
+      console.log('error', error.message);
     }
   }, []);
   return (
