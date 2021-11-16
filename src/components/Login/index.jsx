@@ -94,11 +94,11 @@ const FormLog = () => {
           {error400
             ? <p className="bg-red-200 border-l-2 border-red-700 text-red-700 p-2 ">Password Incorrect</p> : null}
           <input
+            placeholder="Password"
             type="password"
-            ng-model="password"
-            placeholder="password"
-            className={`w-full my-2 px-3 py-2 focus:outline-none rounded ${errorInput ? 'border border-red-700' : ''}`}
             name="password"
+            autoComplete="off"
+            className={`w-full my-2 px-3 py-2 focus:outline-none rounded ${errorInput ? 'border border-red-700' : ''}`}
             onChange={(e) => {
               handleChange(e);
             }}
