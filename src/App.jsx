@@ -4,8 +4,9 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import {
   BrowserRouter as Router,
   Route,
-  Switch,
+  Switch, Redirect,
 } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import Login from './components/Login';
 import Home from './Views/Home';
 import FirebaseApp from './config/configFirebase';
@@ -18,6 +19,7 @@ const App = () => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setUserGlobal(user);
+        <Redirect to="/" />;
     } else {
       setUserGlobal(null);
     }
@@ -26,14 +28,20 @@ const App = () => {
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
-      {!userGlobal ? (
+      {userGlobal !== null ? (
         <Router>
           <Switch>
-            <Route user={userGlobal} exact path="/">
+            <Route exact path="/">
               <Home />
             </Route>
-            <Route exact path="/login">
-              <Login />
+            <Route exact path="/inventario">
+              <Inventario />
+            </Route>
+            <Route
+              path="/login"
+              exact
+            >
+              <Redirect to="/" />
             </Route>
             {/* <Route component={page404} /> */}
           </Switch>
@@ -44,12 +52,19 @@ const App = () => {
             <Route
               path="/"
               exact
-              component={Home}
-            />
+            >
+              <Redirect to="/login" />
+            </Route>
+            <Route
+              path="/inventario"
+              exact
+            >
+              <Redirect to="/login" />
+            </Route>
             <Route
               exact
-              path="/inventario"
-              component={Inventario}
+              path="/login"
+              component={Login}
             />
             {/* <Route component={page404} /> */}
           </Switch>

@@ -11,7 +11,9 @@ import WarningAlert from '../WarningAlert';
 import FirebaseApp from '../../config/configFirebase';
 import './main.css';
 
-const ModalProduct = ({ setModalProduct, getData }) => {
+const ModalProduct = ({
+  setModalProduct, getData,
+}) => {
   const [checked, setChecked] = useState(false);
   const [warning, setWarning] = useState(false);
   const [file, setFile] = useState(undefined);
@@ -111,6 +113,9 @@ const ModalProduct = ({ setModalProduct, getData }) => {
     setChecked(false);
     setFile(undefined);
     await getData();
+    setTimeout(() => {
+      setModalProduct();
+    }, 1000);
   };
 
   return (
@@ -121,7 +126,7 @@ const ModalProduct = ({ setModalProduct, getData }) => {
           setWarning={setWarning}
         />
       ) : null}
-      <div className="fixed bg-gray-800 bg-opacity-95 flex flex-wrap items-center justify-center min-h-screen min-w-full top-0 animate__animated animate__faster animate__fadeIn">
+      <div className="fixed bg-gray-800 bg-opacity-95 flex flex-wrap items-center justify-center min-h-screen min-w-full top-0 animate__animated animate__faster animate__fadeIn z-40">
         <button
           className="absolute top-20 right-12"
           type="button"

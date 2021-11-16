@@ -6,9 +6,16 @@ import { Link } from 'react-router-dom';
 // import FirebaseApp from '../../config/configFirebase';
 import ModalProduct from '../NewProduct';
 import { getInventarioData, deletdProduct } from '../../functions/functionsFirebase';
+import './main.css';
 
 const Inventario = () => {
   const [editProduc, setEditProduc] = useState(false);
+  const [prodEdit, setProdEdit] = useState({
+    name: '',
+    description: '',
+    price: '',
+    quantity: '',
+  });
   // const firestore = getFirestore(FirebaseApp());
   const [modalProduct, setModalProduct] = useState(false);
   // eslint-disable-next-line no-unused-vars
@@ -19,8 +26,8 @@ const Inventario = () => {
     setInventario(result.docs);
   };
 
-  useEffect(() => {
-    getData();
+  useEffect(async () => {
+    await getData();
   }, []);
 
   return (
@@ -30,19 +37,32 @@ const Inventario = () => {
           setModalProduct={setModalProduct}
           getData={getData}
           editProduc={editProduc}
+          prodEdit={prodEdit}
         />
       ) : null}
-      <div className="w-10/12 m-auto mt-20">
-        <div className="w-1/2 m-auto my-14">
-          <h1 className="text-center">Inventarios L</h1>
-        </div>
-        <Link to="/" className="bg-blue-400 px-4 py-2 rounded">Home</Link>
+      <div className="w-1/2 m-auto my-14">
+        <p className="text-center text-2xl">Inventarios Lenteopia</p>
+      </div>
+      <div className="w-10/12 m-auto">
+        <Link to="/" className="flex flex-wrap items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <p className="ml-2 py-2 rounded">Home</p>
+        </Link>
+      </div>
+      <div className="w-10/12 m-auto mt-20 bg-white pb-16 rounded-md">
         <div className="w-full py-12">
-          Products en Inventario
-          <div>
+          <div className="w-10/12 m-auto flex flex-wrap items-center justify-between">
+            <div className="relative flex flex-wrap items-center w-35">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 absolute left-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" placeholder="Search Product" className="rounded border border-gray-300 focus:outline-none pr-3 pl-16 py-2 w-full" />
+            </div>
             <button
               type="button"
-              className="bg-green-400 px-4 py-2 mt-7"
+              className="bg-custom-blue px-4 py-2 rounded-md text-white"
               onClick={() => {
                 setModalProduct(!modalProduct);
               }}
@@ -123,6 +143,7 @@ const Inventario = () => {
                               <button
                                 type="button"
                                 onClick={() => {
+                                  setProdEdit(product.data());
                                   setEditProduc(true);
                                   setModalProduct(!modalProduct);
                                 }}
