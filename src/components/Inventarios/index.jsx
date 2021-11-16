@@ -69,7 +69,7 @@ const Inventario = () => {
             </div>
             <button
               type="button"
-              className="bg-custom-blue px-4 py-2 rounded-md text-white"
+              className="bg-custom-blue px-4 py-2 rounded-md text-white mt-4 lg:mt-0"
               onClick={() => {
                 setModalProduct(!modalProduct);
               }}
@@ -125,19 +125,25 @@ const Inventario = () => {
                               scope="col"
                               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
-                              Title
+                              Precio
                             </th>
                             <th
                               scope="col"
                               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
-                              Status
+                              Stock
                             </th>
                             <th
                               scope="col"
                               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
-                              Role
+                              F/Azul
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              Description
                             </th>
                             <th scope="col" className="relative px-6 py-3">
                               <span className="sr-only">Edit</span>
@@ -165,11 +171,13 @@ const Inventario = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-900">{product.data().price}</div>
-                                <div className="text-sm text-gray-500">{product.data().category}</div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                  Active
+                                <div className="text-sm text-gray-900">{product.data().quantity}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                  N/A
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.data().description}</td>

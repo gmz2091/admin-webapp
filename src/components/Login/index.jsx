@@ -95,6 +95,7 @@ const FormLog = () => {
             ? <p className="bg-red-200 border-l-2 border-red-700 text-red-700 p-2 ">Password Incorrect</p> : null}
           <input
             type="password"
+            ng-model="password"
             placeholder="password"
             className={`w-full my-2 px-3 py-2 focus:outline-none rounded ${errorInput ? 'border border-red-700' : ''}`}
             name="password"
@@ -102,6 +103,16 @@ const FormLog = () => {
               handleChange(e);
             }}
           />
+          {/* <input
+            type="password"
+            placeholder="password"
+            className={`w-full my-2 px-3 py-2 focus:outline-none rounded
+            ${errorInput ? 'border border-red-700' : ''}`}
+            name="password"
+            onChange={(e) => {
+              handleChange(e);
+            }}
+          /> */}
 
         </div>
         <button type="submit" className="text-center text-lg w-full px-4 py-2 bg-green-400">{showSpinner ? (<Spinner />) : 'Login' }</button>
